@@ -44,10 +44,11 @@ namespace L3
             ErrorCode ec = ErrorCode.None;
             try
             {
+                trinket.open();
+
                 if (args.Length != 0)
                 {
                     // open usb communications
-                    trinket.open();
 
                     if (args.Length == numberOfDiodes) 
                     {
@@ -60,7 +61,7 @@ namespace L3
                             trinket.setGreen(i, byte.Parse(trimmed.Substring(2, 2), System.Globalization.NumberStyles.HexNumber));
                             trinket.setBlue(i, byte.Parse(trimmed.Substring(4, 2), System.Globalization.NumberStyles.HexNumber));
                         }
-                        trinket.update();
+                        Console.Write(trinket.update().ToString());
                     }
                     else if (args.Length == 1) // one argument means either a game file or an animation
                     {
@@ -106,11 +107,12 @@ namespace L3
                                     trinket.setGreen(i,frame.intensity[i*3 + 1]);
                                     trinket.setBlue(i, frame.intensity[i*3 + 2]);
                                 }
-                                trinket.update();
                                 Thread.Sleep(frame.duration);
+                                //trinket.update();
+                                Console.WriteLine(trinket.update().ToString());
                             }
 
-                            //Console.ReadKey();
+                            Console.ReadKey();
                         }
                         else //gamefile
                         {
@@ -144,7 +146,7 @@ namespace L3
                             }
                             // set system button colors
                             setDiodeColorBuffers(buttons, "SystemButtonColors", buttons, colors);
-                            trinket.update();
+                            Console.Write(trinket.update().ToString());
                         }
                      
                     }

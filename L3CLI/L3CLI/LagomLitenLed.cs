@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 using LibUsbDotNet;
 using LibUsbDotNet.Main;
@@ -33,15 +34,17 @@ namespace L3
             if (MyUsbDevice == null) throw new Exception("Device Not Found.");
             UsbEndpointReader reader = MyUsbDevice.OpenEndpointReader(ReadEndpointID.Ep01);
         }
-         public void update()
+         public int update()
         {
+            int retval = 0;
             for (int i = 0; i < numberOfDiodes; i++)
             {
                 // send all diode colors without refreshing (command 2)
                 // pack led number and red into "value" pack green and blue into "index"
-                sendCommand(2, (short)(i | red[i] << 8), (short)(green[i] | blue[i] << 8));
+                retval += sendCommand(2, (short)(i | red[i] << 8), (short)(green[i] | blue[i] << 8));
             }
-            sendRefresh();
+            retval += sendRefresh();
+            return retval;
         }
         public void close()
         {
@@ -88,22 +91,34 @@ namespace L3
         {
             return blue[index];
         }
-        public string sendRefresh()
+        public int sendRefresh()
         {
             // send refresh command (request 3)
-            return (sendCommand(3, 0, 0));
+            return sendCommand(3, 0, 0);
         }
 
-        public string sendCommand(byte command, short value, short index)
+        public int sendCommand(byte command, short value, short index)
         {
-            byte[] buffer = new byte[8];
-            int actuallySent;
-
+            byte[] buffer = new byte[4];
+            int actuallySent = 0;
+            int counter = 0;
             UsbSetupPacket usp = new UsbSetupPacket((byte)((byte)UsbRequestType.TypeVendor | (byte)UsbRequestRecipient.RecipDevice | (byte)UsbEndpointDirection.EndpointIn), command, value, index, (short)buffer.Length);
-            if (MyUsbDevice.ControlTransfer(ref usp, buffer, buffer.Length, out actuallySent))
-                return "Trinket says: " + buffer[0] + " " + buffer[1] + " " + buffer[2] + " " + buffer[3];
-            else
-                return "Command" + command.ToString() + "failed.";
+            
+            while(actuallySent != buffer.Length)
+            {
+                MyUsbDevice.ControlTransfer(ref usp, buffer, buffer.Length, out actuallySent);
+                counter++;
+                if (counter >= 100)
+                {
+                    throw new Exception(string.Format("ControlTransfer failed after {0} tries", counter));
+                }
+            //if (MyUsbDevice.ControlTransfer(ref usp, buffer, buffer.Length, out actuallySent))
+               // return "Trinket says: " + buffer[0] + " " + buffer[1] + " " + buffer[2] + " " + buffer[3] +" Actually sent: "+actuallySent.ToString() + " ";
+            //else
+               // return Environment.NewLine + "Command" + command.ToString() + "failed." + " Actually sent: " + actuallySent.ToString() + Environment.NewLine;
+            }
+            //return "Trinket says: " + buffer[0] + " " + buffer[1] + " " + buffer[2] + " " + buffer[3] + " Actually sent: " + actuallySent.ToString() + " Tries: " + counter.ToString();
+            return counter;
         }
         public int getNumberOfDiodes()
         {
