@@ -102,9 +102,10 @@ namespace L3
             byte[] buffer = new byte[4];
             int actuallySent = 0;
             int counter = 0;
+            // abuse the setup packet to send five bytes
             UsbSetupPacket usp = new UsbSetupPacket((byte)((byte)UsbRequestType.TypeVendor | (byte)UsbRequestRecipient.RecipDevice | (byte)UsbEndpointDirection.EndpointIn), command, value, index, (short)buffer.Length);
             
-            while(actuallySent != buffer.Length)
+            while(actuallySent != buffer.Length) // could check buffer for the return values (since the firmware returns the same values back) but it might be faster to omit the return values on the trinket side 
             {
                 MyUsbDevice.ControlTransfer(ref usp, buffer, buffer.Length, out actuallySent);
                 counter++;

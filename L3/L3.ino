@@ -4,19 +4,19 @@
   #include <avr/power.h>
 #endif
 #define LED_OUTPUT_PIN 1
-#define NUMBER_OF_LEDS 29
+#define NUMBER_OF_LEDS 28
 
 uint8_t diodes[NUMBER_OF_LEDS*3];
-bool needsRefresh;
+bool doRefresh;
 
 #include "LagomLitenUSB.h"
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMBER_OF_LEDS, LED_OUTPUT_PIN, NEO_RGB + NEO_KHZ800);
-
+uint8_t *pixels = strip.getPixels();
 #ifdef __cplusplus
 extern "C" {
 #endif
-static uchar replyBuffer[8];
+static uchar replyBuffer[4];
  
 uchar usbFunctionSetup(uchar data[8])
 {
@@ -31,7 +31,7 @@ uchar len = 0;
     diodes[data[2]*3] = data[3];
     diodes[data[2]*3+1] = data[4];
     diodes[data[2]*3+2] = data[5];
-    needsRefresh = true;
+    doRefresh = true;
     // echo:
     len = 4;
     replyBuffer[0] = data[2];
@@ -48,14 +48,16 @@ uchar len = 0;
     replyBuffer[1] = data[3];
     replyBuffer[2] = data[4];
     replyBuffer[3] = data[5];
+    //return USB_NO_MSG;
   }else if(data[1] == 3){ // refresh all diodes
-    needsRefresh = true;
+    doRefresh = true;
     //echo:
     len = 4;
     replyBuffer[0] = data[2];
     replyBuffer[1] = data[3];
     replyBuffer[2] = data[4];
     replyBuffer[3] = data[5];
+    //return USB_NO_MSG;
   }
   usbMsgPtr = (int)replyBuffer;
 
@@ -82,11 +84,9 @@ void usbBegin()
   sei();
 }
 
-uint8_t * pixels = strip.getPixels();
-
 void setup()
 {
-  needsRefresh=false;
+  doRefresh=false;
   usbBegin();
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
@@ -94,13 +94,13 @@ void setup()
 void loop()
 {
   usbPoll();
-  if (needsRefresh)
+  if (doRefresh)
   {
     for(int i=0;i<NUMBER_OF_LEDS*3;i++)
     {
       pixels[i] = diodes[i];
     }
-    needsRefresh=false;
+    doRefresh=false;
     strip.show();
   }
 }

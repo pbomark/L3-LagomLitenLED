@@ -2,9 +2,8 @@
 extern "C" {
 #endif
 
-#include <avr/io.h>
+//#include <avr/io.h>
 #include <avr/pgmspace.h>
-#include <util/delay.h>
 #include "usbdrv/usbdrv.h"
 
 #if defined(__AVR_ATtiny85__) || defined(__AVR_ATtiny45__) || defined(__AVR_ATtiny25__)
@@ -64,19 +63,6 @@ both regions.
 */
 #endif
 
-/* These are for testing only -- we don't enable USB_CFG_IMPLEMENT_FN_* */
-#if USB_CFG_IMPLEMENT_FN_WRITE
-uchar   usbFunctionWrite(uchar *data, uchar len)
-{
-    return 0;
-}
-#endif
-#if USB_CFG_IMPLEMENT_FN_READ
-uchar   usbFunctionRead(uchar *data, uchar len)
-{
-    return 0;
-}
-#endif
 
 #ifdef __cplusplus
 }

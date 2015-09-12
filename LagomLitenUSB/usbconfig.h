@@ -111,7 +111,7 @@ License along with TrinketFakeUsbSerial. If not, see
  * it is required by the standard. We have made it a config option because it
  * bloats the code considerably.
  */
-#define USB_CFG_SUPPRESS_INTR_CODE      0
+#define USB_CFG_SUPPRESS_INTR_CODE      1
 /* Define this to 1 if you want to declare interrupt-in endpoints, but don't
  * want to send any data over them. If this macro is defined to 1, functions
  * usbSetInterrupt() and usbSetInterrupt3() are omitted. This is useful if
@@ -133,7 +133,7 @@ License along with TrinketFakeUsbSerial. If not, see
  * The value is in milliamperes. [It will be divided by two since USB
  * communicates power requirements in units of 2 mA.]
  */
-#define USB_CFG_IMPLEMENT_FN_WRITE      1
+#define USB_CFG_IMPLEMENT_FN_WRITE      0
 /* Set this to 1 if you want usbFunctionWrite() to be called for control-out
  * transfers. Set it to 0 if you don't need it and want to save a couple of
  * bytes.
@@ -255,8 +255,8 @@ extern void calibrateOscillator(void);
 #define USB_CFG_DEVICE_VERSION  0x00, 0x01
 /* Version number of the device: Minor number first, then major number.
  */
-#define USB_CFG_VENDOR_NAME     'A', 'd', 'a', 'f', 'r', 'u', 'i', 't'
-#define USB_CFG_VENDOR_NAME_LEN 8
+//#define USB_CFG_VENDOR_NAME     'L'
+//#define USB_CFG_VENDOR_NAME_LEN 1
 /* These two values define the vendor name returned by the USB device. The name
  * must be given as a list of characters under single quotes. The characters
  * are interpreted as Unicode (UTF-16) entities.
@@ -265,8 +265,8 @@ extern void calibrateOscillator(void);
  * obdev's free shared VID/PID pair. See the file USB-IDs-for-free.txt for
  * details.
  */
-#define USB_CFG_DEVICE_NAME     'T', 'r', 'i', 'n', 'k', 'e', 't', ' ', 'F', 'a', 'k', 'e', ' ', 'U', 'S', 'B', ' ', 'S', 'e', 'r', 'i', 'a', 'l',
-#define USB_CFG_DEVICE_NAME_LEN 23
+//#define USB_CFG_DEVICE_NAME     '3'
+//#define USB_CFG_DEVICE_NAME_LEN 1
 /* Same as above for the device name. If you don't want a device name, undefine
  * the macros. See the file USB-IDs-for-free.txt before you assign a name if
  * you use a shared VID/PID.
