@@ -4,7 +4,7 @@
   #include <avr/power.h>
 #endif
 #define LED_OUTPUT_PIN 1
-#define NUMBER_OF_LEDS 28
+#define NUMBER_OF_LEDS 29
 
 uint8_t diodes[NUMBER_OF_LEDS*3];
 bool doRefresh;
