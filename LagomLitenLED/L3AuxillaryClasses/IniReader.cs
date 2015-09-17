@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Ini
 {
-    class IniReader
+    public class IniReader
     {
         Dictionary<string, Dictionary<string, string>> ini = new Dictionary<string, Dictionary<string, string>>(StringComparer.InvariantCultureIgnoreCase);
 

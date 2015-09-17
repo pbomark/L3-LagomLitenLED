@@ -6,13 +6,14 @@ using System.Threading;
 
 using System.Xml;
 
-using LibUsbDotNet;
-using LibUsbDotNet.Main;
+//using LibUsbDotNet;
+//using LibUsbDotNet.Main;
 
 using Ini;
 using L3;
 
-namespace L3
+namespace L3CLI
+
 {
     public struct KeyFrame
     {
@@ -41,7 +42,7 @@ namespace L3
         
         public static void Main(string[] args)
         {
-            ErrorCode ec = ErrorCode.None;
+            //ErrorCode ec = ErrorCode.None;
             try
             {
                 trinket.open();
@@ -169,7 +170,7 @@ namespace L3
             catch (Exception ex)
             {
                 Console.WriteLine();
-                Console.WriteLine((ec != ErrorCode.None ? ec + ":" : String.Empty) + ex.Message);
+                Console.WriteLine(ex.Message);
             }
             finally
             {

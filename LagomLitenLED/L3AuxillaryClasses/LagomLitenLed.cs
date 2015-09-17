@@ -10,7 +10,7 @@ using LibUsbDotNet.Main;
 
 namespace L3
 {
-    class LagomLitenLed
+    public class LagomLitenLed
     {
         private UsbDevice MyUsbDevice;
         private UsbDeviceFinder MyUsbFinder;
@@ -52,6 +52,8 @@ namespace L3
             {
                 if (MyUsbDevice.IsOpen)
                 {
+                    setToBlack();
+                    update();
                     MyUsbDevice.Close();
                 }
                 MyUsbDevice = null;
