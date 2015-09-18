@@ -32,9 +32,13 @@ namespace L3Server
     }
     class Server
     {
+        // trinket controller
         static LagomLitenLed trinket = new LagomLitenLed();
         static int numberOfDiodes = trinket.getNumberOfDiodes();
+        
+        // stop condition
         static bool stop = false;
+
         static public void setDiodeColorBuffers(IniReader tagFile, string section, IniReader buttonFile, IniReader colorFile)
         {
             foreach (string key in tagFile.GetKeys(section))
@@ -54,7 +58,7 @@ namespace L3Server
         {
             // handle closing of the window correctly (see #region cleanup)
             HandlerRoutine hr = new HandlerRoutine(ConsoleCtrlCheck);
-            SetConsoleCtrlHandler(hr, true); 
+            SetConsoleCtrlHandler(hr, true);
 
             using (var server = new MailslotServer("LagomLitenLedMailSlot"))
             {
@@ -148,7 +152,7 @@ namespace L3Server
                                     }
                                     else
                                     {
-                                        Console.Write("Game file " + arguments[0] + " not found in colors.ini nor in supersede.ini");
+                                        Console.WriteLine("Game file " + arguments[0] + " not found in colors.ini nor in supersede.ini");
                                     }
                                     // set system button colors
                                     setDiodeColorBuffers(buttons, "SystemButtonColors", buttons, colors);
