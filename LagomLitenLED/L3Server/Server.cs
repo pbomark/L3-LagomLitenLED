@@ -65,6 +65,21 @@ namespace L3Server
                 try
                 {
                     trinket.open();
+
+                    // Game lists etc:
+                    // read game ini file
+                    IniReader games = new IniReader("../../../configuration/Colors.ini");
+
+                    // supersede allows defining new games or redefining games already in colors.ini to new colors.
+                    IniReader supersede = new IniReader("../../../configuration/supersede.ini");
+
+                    // buttons.ini define which diode goes to which button
+                    IniReader buttons = new IniReader("../../../configuration/Buttons.ini");
+
+                    // colordefinitions.ini have name definitions for different colors.
+                    IniReader colors = new IniReader("../../../configuration/ColorDefinitions.ini");
+
+
                     while (!stop)
                     {
                         var msg = server.GetNextMessage();
@@ -80,6 +95,7 @@ namespace L3Server
                                 else if (arguments[0].EndsWith(".lwax", true, null)) // animation, ignore case, default culture
                                 {
                                     XmlDocument anim = new XmlDocument();
+                                    //TODO: add error handling
                                     anim.Load(arguments[0]);
 
                                     XmlNodeList intensityList, stateList;
@@ -110,7 +126,6 @@ namespace L3Server
                                         animation[i] = new KeyFrame(int.Parse(frameparent.GetAttribute("Duration")), currentIntensity, currentState);
                                     }
 
-
                                     foreach (KeyFrame frame in animation)
                                     {
                                         for (int i = 0; i < numberOfDiodes; i++)
@@ -129,18 +144,6 @@ namespace L3Server
                                     // Most games don't use all buttons, so lets paint it black
                                     trinket.setToBlack();
 
-                                    // read game ini file
-                                    IniReader games = new IniReader("../../../configuration/Colors.ini");
-
-                                    // supersede allows defining new games or redefining games already in colors.ini to new colors.
-                                    IniReader supersede = new IniReader("../../../configuration/supersede.ini");
-
-                                    // buttons.ini define which diode goes to which button
-                                    IniReader buttons = new IniReader("../../../configuration/Buttons.ini");
-
-                                    // colordefinitions.ini have name definitions for different colors.
-                                    IniReader colors = new IniReader("../../../configuration/ColorDefinitions.ini");
-
                                     // check if the argument matches any of the game files 
                                     if (games.ContainsSection(arguments[0]) && !supersede.ContainsSection(arguments[0])) // allow supersede to override the colors.ini settings.
                                     {
@@ -158,6 +161,30 @@ namespace L3Server
                                     setDiodeColorBuffers(buttons, "SystemButtonColors", buttons, colors);
                                     Console.Write(trinket.update().ToString());
                                 }
+                            }
+                            else if (arguments.Length == 2) // probably keyboardsender sends (Index,KeyboardEventName)
+                            {
+                                // check buttons.ini if the outputs are grouped (i.e four LEDs for one joystick)
+                                foreach (string key in buttons.GetKeys("Diodes"))// expensive going through them all
+                                {
+                                    string[] diodes = buttons.GetValue(key, "Diodes").Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                                    if (diodes.Contains(arguments[0]))
+                                    {
+                                        foreach (string diode in diodes)
+                                        {
+                                            // most cases diodes is  only 1 long, in all other cases leds are grouped.
+                                            // invert color rgb wise (keydown inverts once, keyup on same index will invert back to initial values)
+                                            int index = int.Parse(arguments[0]);
+                                            byte red = trinket.getRed(index);
+                                            byte green = trinket.getGreen(index);
+                                            byte blue = trinket.getBlue(index);
+                                            trinket.setRed(index, (byte)(255 - red));
+                                            trinket.setGreen(index, (byte)(255 - green));
+                                            trinket.setBlue(index, (byte)(255 - blue));
+                                        }
+                                    }
+                                }
+                                Console.Write(trinket.update().ToString());
                             }
                             else if (arguments.Length == numberOfDiodes) // set colors directly
                             {
