@@ -39,6 +39,10 @@ namespace L3KeyboardSender
         {
             if (e.KeyboardEventName == KeyboardEventNames.KeyUp || e.KeyboardEventName == KeyboardEventNames.KeyDown)
             {
+                // check against LEDBlinkyInputMap.xml if the key is mapped, ach which pin it's mapped against
+
+                
+                
                 using (var client = new MailslotClient("LagomLitenLedMailSlot"))
                 {
                     // change so it tries to send, if server is down it will fail as it is now

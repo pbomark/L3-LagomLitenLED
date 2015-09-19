@@ -130,16 +130,16 @@ namespace L3Server
                                     trinket.setToBlack();
 
                                     // read game ini file
-                                    IniReader games = new IniReader("../../data/Colors.ini");
+                                    IniReader games = new IniReader("../../../configuration/Colors.ini");
 
                                     // supersede allows defining new games or redefining games already in colors.ini to new colors.
-                                    IniReader supersede = new IniReader("../../data/supersede.ini");
+                                    IniReader supersede = new IniReader("../../../configuration/supersede.ini");
 
                                     // buttons.ini define which diode goes to which button
-                                    IniReader buttons = new IniReader("../../data/Buttons.ini");
+                                    IniReader buttons = new IniReader("../../../configuration/Buttons.ini");
 
                                     // colordefinitions.ini have name definitions for different colors.
-                                    IniReader colors = new IniReader("../../data/ColorDefinitions.ini");
+                                    IniReader colors = new IniReader("../../../configuration/ColorDefinitions.ini");
 
                                     // check if the argument matches any of the game files 
                                     if (games.ContainsSection(arguments[0]) && !supersede.ContainsSection(arguments[0])) // allow supersede to override the colors.ini settings.
