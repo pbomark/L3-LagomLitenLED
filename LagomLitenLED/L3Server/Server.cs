@@ -174,7 +174,7 @@ namespace L3Server
                                         {
                                             // most cases diodes is  only 1 long, in all other cases leds are grouped.
                                             // invert color rgb wise (keydown inverts once, keyup on same index will invert back to initial values)
-                                            int index = int.Parse(arguments[0]);
+                                            int index = int.Parse(diode);
                                             byte red = trinket.getRed(index);
                                             byte green = trinket.getGreen(index);
                                             byte blue = trinket.getBlue(index);
